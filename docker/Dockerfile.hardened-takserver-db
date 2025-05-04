@@ -6,7 +6,7 @@ ARG BASE_DEPLOY_TAG=15.1
 ####################################################################################################
 
 ## Base deploy image
-FROM ${BASE_REGISTRY}/${BASE_DEPLOY_IMAGE}:${BASE_DEPLOY_TAG} as deploy_container
+FROM ${BASE_REGISTRY}/${BASE_DEPLOY_IMAGE}:${BASE_DEPLOY_TAG} AS deploy_container
 
 USER root
 
