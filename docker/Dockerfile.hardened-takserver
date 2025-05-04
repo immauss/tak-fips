@@ -6,7 +6,7 @@ ARG BASE_DEPLOY_TAG=1.17
 ####################################################################################################
 
 ## Base deploy image
-FROM ${BASE_REGISTRY}/${BASE_DEPLOY_IMAGE}:${BASE_DEPLOY_TAG} as deploy_container
+FROM ${BASE_REGISTRY}/${BASE_DEPLOY_IMAGE}:${BASE_DEPLOY_TAG} AS deploy_container
 
 USER root
 
@@ -25,6 +25,7 @@ RUN dnf update -y --disableplugin=subscription-manager --nodocs \
            xemacs-nox \
            net-tools \
            netcat \
+           openssl \
            vim \
     && dnf clean all \
     && rm -rf /var/cache/dnf
