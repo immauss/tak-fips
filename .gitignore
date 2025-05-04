@@ -4,6 +4,7 @@
 *.tmp
 *.jks
 *.cer
+*.pem
 *pass*
 *.crt
 *.key

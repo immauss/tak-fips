@@ -51,7 +51,7 @@ done
 SUBJ=$SUBJBASE"CN=$CA_NAME"
 echo "Making a CA for " $SUBJ
 openssl req -new -sha256 -x509 -days 3652 -extensions v3_ca -keyout ca-do-not-share.key -out ca.pem -passout pass:${CAPASS} -config ../config.cfg -subj "$SUBJ"
-openssl x509 ${FIPS_SETTINGS} -in ca.pem  -addtrust clientAuth -addtrust serverAuth -setalias "${CA_NAME}" -out ca-trusted.pem
+openssl x509 -in ca.pem  -addtrust clientAuth -addtrust serverAuth -setalias "${CA_NAME}" -out ca-trusted.pem
 
 # create a legcacy p12 for compatibility with older clients
 if [ "$fips" = true ];then

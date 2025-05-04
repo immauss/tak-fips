@@ -6,8 +6,8 @@ then
   exit -1
 else
   ./cert-metadata.sh
-  ./makeRootCa.sh -fips --ca-name $CA_NAME
-  ./makeCert.sh -fips server takserver
-  ./makeCert.sh -fips client user
-  ./makeCert.sh -fips client admin
+  ./makeRootCa.sh --ca-name $CA_NAME
+  ./makeCert.sh server takserver -fips
+  ./makeCert.sh client user -fips 
+  ./makeCert.sh client admin -fips
 fi
