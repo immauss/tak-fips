@@ -58,7 +58,7 @@ if [ "$fips" = true ];then
   openssl pkcs12 ${CRYPTO_SETTINGS} -export -in ca-trusted.pem -out truststore-root-legacy.p12 -nokeys -caname "${CA_NAME}" -passout pass:${CAPASS}
 fi
 openssl pkcs12 ${CRYPTO_SETTINGS} ${FIPS_SETTINGS} -export -in ca-trusted.pem -out truststore-root.p12 -nokeys -caname "${CA_NAME}" -passout pass:${CAPASS}
-keytool -import -trustcacerts -file ca.pem -keystore truststore-root.jks -alias "${CA_NAME}" -storepass "${CAPASS}" -noprompt
+keytool -sigalg SHA256withRSA -keyalg RSA -keysize 2048  -import -trustcacerts -file ca.pem -keystore truststore-root.jks -alias "${CA_NAME}" -storepass "${CAPASS}" -noprompt
 cp truststore-root.jks fed-truststore.jks
 
 ## make copies for safety

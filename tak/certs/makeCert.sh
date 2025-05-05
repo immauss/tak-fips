@@ -116,17 +116,17 @@ cat ca-trusted.pem >> "${SNAME}"-trusted.pem
 # now make pkcs12 and jks keystore files
 if [[ "$1" == "server" ||  "$1" == "client" || "$1" == "dbclient" ]]; then
   openssl pkcs12 ${CRYPTO_SETTINGS} ${FIPS_SETTINGS} -export -in "${SNAME}".pem -inkey "${SNAME}".key -out "${SNAME}".p12 -name "${SNAME}" -CAfile ca.pem -passin pass:${PASS} -passout pass:${PASS}
-  keytool -importkeystore -deststorepass "${PASS}" -destkeypass "${PASS}" -destkeystore "${SNAME}".jks -srckeystore "${SNAME}".p12 -srcstoretype PKCS12 -srcstorepass "${PASS}" -alias "${SNAME}"
+  keytool  -sigalg SHA256withRSA -keyalg RSA -keysize 2048 -importkeystore -deststorepass "${PASS}" -destkeypass "${PASS}" -destkeystore "${SNAME}".jks -srckeystore "${SNAME}".p12 -srcstoretype PKCS12 -srcstorepass "${PASS}" -alias "${SNAME}"
 else # a CA
   if [ "$fips" = true ];then
     openssl pkcs12 ${CRYPTO_SETTINGS} -export -in "${SNAME}"-trusted.pem -out truststore-"${SNAME}"-legacy.p12 -nokeys -passout pass:${CAPASS}
   fi
   openssl pkcs12 ${CRYPTO_SETTINGS} ${FIPS_SETTINGS} ${FIPS_SETTINGS} -export -in "${SNAME}"-trusted.pem -out truststore-"${SNAME}".p12 -nokeys -passout pass:${CAPASS}
-  keytool -import -trustcacerts -file "${SNAME}".pem -keystore truststore-"${SNAME}".jks -storepass "${CAPASS}" -noprompt
+  keytool -sigalg SHA256withRSA -keyalg RSA -keysize 2048 -import -trustcacerts -file "${SNAME}".pem -keystore truststore-"${SNAME}".jks -storepass "${CAPASS}" -noprompt
 
   # include a CA signing keystore; NOT FOR DISTRIBUTION TO CLIENTS
   openssl pkcs12 ${CRYPTO_SETTINGS} ${FIPS_SETTINGS} -export -in "${SNAME}".pem -inkey "${SNAME}".key -out "${SNAME}"-signing.p12 -name "${SNAME}" -passin pass:${CAPASS} -passout pass:${CAPASS}
-  keytool -importkeystore -deststorepass "${CAPASS}" -destkeypass "${CAPASS}" -destkeystore "${SNAME}"-signing.jks -srckeystore "${SNAME}"-signing.p12 -srcstoretype PKCS12 -srcstorepass "${CAPASS}" -alias "${SNAME}"
+  keytool -sigalg SHA256withRSA -keyalg RSA -keysize 2048  -importkeystore -deststorepass "${CAPASS}" -destkeypass "${CAPASS}" -destkeystore "${SNAME}"-signing.jks -srckeystore "${SNAME}"-signing.p12 -srcstoretype PKCS12 -srcstorepass "${CAPASS}" -alias "${SNAME}"
 
   ## create empty crl 
   openssl ca -config ../config.cfg -gencrl -keyfile "${SNAME}".key -key ${CAPASS} -cert "${SNAME}".pem -out "${SNAME}".crl
