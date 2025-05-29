@@ -29,6 +29,21 @@ RUN dnf update -y --disableplugin=subscription-manager --nodocs \
            vim \
     && dnf clean all \
     && rm -rf /var/cache/dnf
+# Harden java.security for FIPS compliance
+RUN set -euxo pipefail && \
+  JAVA_SECURITY_FILE="/usr/lib/jvm/java-17-openjdk/conf/security/java.security" && \
+  cp "$JAVA_SECURITY_FILE" "${JAVA_SECURITY_FILE}.bak" && \
+  sed -i '/jdk.certpath.disabledAlgorithms=/d' "$JAVA_SECURITY_FILE" && \
+  sed -i '/jdk.tls.disabledAlgorithms=/d' "$JAVA_SECURITY_FILE" && \
+  echo "" >> "$JAVA_SECURITY_FILE" && \
+  echo "# FIPS hardening - disable weak algorithms" >> "$JAVA_SECURITY_FILE" && \
+  echo "jdk.certpath.disabledAlgorithms=MD2, MD5, SHA1, DSA, RSA keySize < 2048" >> "$JAVA_SECURITY_FILE" && \
+  echo "jdk.tls.disabledAlgorithms=SSLv3, RC4, MD5, SHA1, DH keySize < 2048, RSA keySize < 2048, DSA keySize < 2048" >> "$JAVA_SECURITY_FILE" && \
+  echo "securerandom.source=file:/dev/urandom" >> "$JAVA_SECURITY_FILE" && \
+  echo "security.useSystemPropertiesFile=false" >> "$JAVA_SECURITY_FILE"
+
+# Set environment variable to enforce FIPS properties
+ENV JAVA_TOOL_OPTIONS="-Dcom.redhat.fips=true -Djava.security.properties=/usr/lib/jvm/java-17-openjdk/conf/security/java.security"
 
 #fix fips related issue, takserver needs the non fips providers so simply set them as fips providers so that they are available
 RUN echo "fips.provider.1=SUN" >> $JAVA_HOME/conf/security/java.security

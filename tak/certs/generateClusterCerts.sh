@@ -7,7 +7,7 @@ then
 else
   ./cert-metadata.sh
   ./makeRootCa.sh --ca-name $CA_NAME
-  ./makeCert.sh server takserver -fips
-  ./makeCert.sh client user -fips 
-  ./makeCert.sh client admin -fips
+  ./makeCert.sh server takserver --fips
+  ./makeCert.sh client user --fips 
+  ./makeCert.sh client admin --fips
 fi

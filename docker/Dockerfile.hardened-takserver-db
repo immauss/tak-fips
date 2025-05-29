@@ -51,8 +51,7 @@ RUN chown -R postgres:0 /var/lib/postgresql && \
 
 ENV POSTGRES_HOST_AUTH_METHOD=trust
 
-#runs in takserver-setup-db.sh but fails because of permissions. running as root to prevent error
-RUN chkconfig --level 345 postgresql-15 on
+
 
 RUN usermod -a -G root postgres
 USER postgres:0

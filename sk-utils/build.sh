@@ -1,12 +1,13 @@
 
 docker rm -f ca-setup takserver tak-database
 mkdir -p files
-rm tak/certs/files/*
-rm -rf files/*
+sudo chown 1001:1001 files
+sudo rm tak/certs/files/*
+sudo rm -rf files/*
 
-docker build -t ca-setup-hardened --build-arg ARG_CA_NAME=CA --build-arg ARG_STATE=WA --build-arg ARG_CITY=Wiesbaden --build-arg ARG_ORGANIZATIONAL_UNIT=USAREURAF -f docker/Dockerfile.ca .
+docker build -t ca-setup --build-arg ARG_CA_NAME=svi.immauss.com --build-arg ARG_STATE=WA --build-arg ARG_CITY=Wiesbaden --build-arg ARG_ORGANIZATIONAL_UNIT=USAREURAF -f docker/Dockerfile.ca .
 
-docker run --name ca-setup -v $(pwd)/files:/tak/certs/files -it -d ca-setup-hardened
+docker run --name ca-setup -v $(pwd)/files:/tak/certs/files -it -d ca-setup
 
 echo "Waiting for script to generate certs"
 sleep 5
@@ -38,7 +39,7 @@ docker build -t takserver-hardened -f docker/Dockerfile.hardened-takserver .
 
 echo "Starting database container"
 docker run -v $(pwd)/files:/opt/tak/certs/files \
-    --name tak-database --network takserver-net \
+    --name tak-database-hardened --network takserver-net \
     -d tak-database-hardened #-p 5432:5432 <- does not need to be exposed outside of the docker network
 
 echo "Starting takserver-hardened"
